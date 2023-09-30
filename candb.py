@@ -52,14 +52,15 @@ class CANDBC:
                     print(e.name, 'already exist')
                     continue
 
-            assert len(m.senders) < 2, 'senders should be one'
+            # assert len(m.senders) < 2, 'senders should be one'
 
             if len(m.senders) == 1:
                 sender = m.senders[0]
                 ecu = ECU(sender)
                 self.ecu_set.add(ecu)
             else:
-                print('exceptional case : no sender')
+                self.count_signal_abnormal = self.count_signal_abnormal + 1
+                print('exceptional case : sender is not one', len(m.senders))
 
     def show_messages(self):
         count = 0
@@ -90,7 +91,7 @@ class CANDBC:
 
     def show_counts(self):
         print('')
-        self.eval_signals()
+        # self.eval_signals()
 
         print('total:', self.count_messages,                   # num of can messages
               'messages,', self.count_signals,                 # num of can signals total
