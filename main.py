@@ -44,7 +44,7 @@ def save_dataframes_to_csv(message_df, signal_df_simple, signal_df, ecu_matrix_d
     message_df.to_csv("message.csv", index=False, sep=',')
     signal_df_simple.to_csv("signal_simple.csv", index=False, sep=',')
     signal_df.to_csv("signal.csv", index=False, sep=',')
-    ecu_matrix_df.to_csv("ecu_matrix.csv", index=False, sep=',')
+    ecu_matrix_df.to_csv("ecu_matrix.csv", index=True, sep=',')
 
 
 def main():
