@@ -3,6 +3,7 @@
 import cantools
 import pandas as pd
 
+
 class CANToolsParser:
     def __init__(self, dbc_file_path):
         self.dbc_file_path = dbc_file_path
@@ -23,7 +24,7 @@ class CANToolsParser:
                 message_data.append({
                     'Message Name': message.name,
                     'TX': message.senders,
-                    'RX': message.receivers,                    
+                    'RX': message.receivers,
                     'ID': message.frame_id,
                     'Byte Length': message.length,
                     'Desired Receiver': desired_receiver,
@@ -37,14 +38,15 @@ class CANToolsParser:
             for signal in message.signals:
                 for receiver in signal.receivers:
                     if len(message.senders) != 1:
-                        print(f"Error: Signal '{message.name}' has {len(message.senders)} senders.")
+                        print(
+                            f"Error: Signal '{message.name}' has {len(message.senders)} senders.")
                         error_count += 1
 
                     signal_data.append({
                         'Message Name': message.name,
                         'Signal Name': signal.name,
-                        'Transmitter': message.senders,
-                        'Receiver': receiver,
+                        'Transmitter': message.senders[0] if message.senders else '',
+                        'RX': receiver,
                         'Bit Start Position': signal.start,
                         'Bit Length': signal.length,
                         'Unit': signal.unit,
@@ -64,7 +66,7 @@ class CANToolsParser:
                 signal_data.append({
                     'Message Name': message.name,
                     'Signal Name': signal.name,
-                    'TX': message.senders,
+                    'Transmitter': message.senders[0] if message.senders else '',
                     'RX': message.receivers,
                     'Bit Start Position': signal.start,
                     'Bit Length': signal.length,
