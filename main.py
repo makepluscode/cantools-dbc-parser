@@ -38,17 +38,11 @@ def print_parsing_errors(message_parsing_error, signal_simple_parsing_error, sig
     print(f"시그널 데이터 파싱 오류: {signal_parsing_error} 개")
 
 
-def save_dataframes_to_csv(message_df, signal_df_simple, signal_df):
+def save_dataframes_to_csv(message_df, signal_df_simple, signal_df, ecu_matrix_df):
     message_df.to_csv("message.csv", index=False, sep=',')
     signal_df_simple.to_csv("signal_simple.csv", index=False, sep=',')
     signal_df.to_csv("signal.csv", index=False, sep=',')
-
-
-def analyze_signal_data(signal_df):
-    signal_analyzer = SignalAnalyzer()
-    unique_tx_list, tx_count, unique_rx_list, rx_count = signal_analyzer.analyze_signal(
-        signal_df)
-    return unique_tx_list, tx_count, unique_rx_list, rx_count
+    ecu_matrix_df.to_csv("ecu_matrix.csv", index=False, sep=',')
 
 
 def main():
@@ -67,18 +61,16 @@ def main():
     print_parsing_errors(message_parsing_error,
                          signal_simple_parsing_error, signal_parsing_error)
 
-    save_dataframes_to_csv(message_df, signal_df_simple, signal_df)
+    # SignalAnalyzer를 사용하여 주고 받는 시그널의 개수 출력
+    signal_analyzer = SignalAnalyzer(signal_df)
+    ecu_matrix_df, ecu_matrix_total = signal_analyzer.get_ecu_matrix()
 
-    unique_tx_list, tx_count, unique_rx_list, rx_count = analyze_signal_data(
-        signal_df)
+    print("\n주고 받는 시그널의 개수:", ecu_matrix_total)
+    print()
+    print(ecu_matrix_df)
 
-    print("\nUnique TX List:")
-    print(unique_tx_list)
-    print(f"TX Count: {tx_count}")
-
-    print("\nUnique RX List:")
-    print(unique_rx_list)
-    print(f"RX Count: {rx_count}")
+    save_dataframes_to_csv(message_df, signal_df_simple,
+                           signal_df, ecu_matrix_df)
 
 
 if __name__ == "__main__":
