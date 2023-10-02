@@ -1,50 +1,85 @@
 # main.py
 
-import pandas as pd
 from cantools_parser import CANToolsParser
+from signal_analyzer import SignalAnalyzer
 import configparser
 
-if __name__ == "__main__":
+
+def load_config():
     # config.ini 파일을 읽어옴
     config = configparser.ConfigParser()
     config.read('config.ini')
+    return config
 
-    # DBC 파일 경로 설정
-    dbc_file_path = config['Paths']['dbc_file_path']
 
+def parse_dbc_file(dbc_file_path):
     parser = CANToolsParser(dbc_file_path)
+    return parser.parse_dbc()
 
-    # DBC 파일 파싱
-    db = parser.parse_dbc()
 
-    # desired_receiver의 기본값을 None으로 설정
-    desired_receiver = None
+def extract_message_data(db, desired_receiver=None):
+    parser = CANToolsParser('')
+    return parser.extract_messages(db, desired_receiver)
 
-    # 메시지 데이터 추출
-    message_df, message_parsing_error = parser.extract_messages(db, desired_receiver)
 
-    # 시그널 데이터 추출 (단순 버전)
-    signal_df_simple, signal_simple_parsing_error = parser.extract_signals_simple(db)
+def extract_signal_data(db, desired_receiver=None):
+    parser = CANToolsParser('')
+    return parser.extract_signals(db, desired_receiver)
 
-    # 시그널 데이터 추출 (일반 버전)
-    signal_df, signal_parsing_error = parser.extract_signals(db, desired_receiver)
 
-    # 각 데이터프레임 출력
-    print("메시지 데이터:")
-    print(message_df)
+def extract_signal_data_simple(db):
+    parser = CANToolsParser('')
+    return parser.extract_signals_simple(db)
 
-    print("\n시그널 데이터 (단순 버전):")
-    print(signal_df_simple)
 
-    print("\n시그널 데이터:")
-    print(signal_df)
-
-    # 출력 오류 갯수 출력
+def print_parsing_errors(message_parsing_error, signal_simple_parsing_error, signal_parsing_error):
     print(f"메시지 데이터 파싱 오류: {message_parsing_error} 개")
     print(f"시그널 데이터 (단순 버전) 파싱 오류: {signal_simple_parsing_error} 개")
     print(f"시그널 데이터 파싱 오류: {signal_parsing_error} 개")
 
-    # 각각의 데이터프레임을 각각의 CSV 파일로 저장 (탭으로 구분)
+
+def save_dataframes_to_csv(message_df, signal_df_simple, signal_df):
     message_df.to_csv("message.csv", index=False, sep=',')
     signal_df_simple.to_csv("signal_simple.csv", index=False, sep=',')
     signal_df.to_csv("signal.csv", index=False, sep=',')
+
+
+def analyze_signal_data(signal_df):
+    signal_analyzer = SignalAnalyzer()
+    unique_tx_list, tx_count, unique_rx_list, rx_count = signal_analyzer.analyze_signal(
+        signal_df)
+    return unique_tx_list, tx_count, unique_rx_list, rx_count
+
+
+def main():
+    config = load_config()
+    dbc_file_path = config['Paths']['dbc_file_path']
+
+    db = parse_dbc_file(dbc_file_path)
+    desired_receiver = None
+
+    message_df, message_parsing_error = extract_message_data(
+        db, desired_receiver)
+    signal_df_simple, signal_simple_parsing_error = extract_signal_data_simple(
+        db)
+    signal_df, signal_parsing_error = extract_signal_data(db, desired_receiver)
+
+    print_parsing_errors(message_parsing_error,
+                         signal_simple_parsing_error, signal_parsing_error)
+
+    save_dataframes_to_csv(message_df, signal_df_simple, signal_df)
+
+    unique_tx_list, tx_count, unique_rx_list, rx_count = analyze_signal_data(
+        signal_df)
+
+    print("\nUnique TX List:")
+    print(unique_tx_list)
+    print(f"TX Count: {tx_count}")
+
+    print("\nUnique RX List:")
+    print(unique_rx_list)
+    print(f"RX Count: {rx_count}")
+
+
+if __name__ == "__main__":
+    main()

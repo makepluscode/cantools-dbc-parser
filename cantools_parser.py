@@ -45,7 +45,7 @@ class CANToolsParser:
                     signal_data.append({
                         'Message Name': message.name,
                         'Signal Name': signal.name,
-                        'Transmitter': message.senders[0] if message.senders else '',
+                        'TX': message.senders[0] if message.senders else '',
                         'RX': receiver,
                         'Bit Start Position': signal.start,
                         'Bit Length': signal.length,
@@ -66,7 +66,7 @@ class CANToolsParser:
                 signal_data.append({
                     'Message Name': message.name,
                     'Signal Name': signal.name,
-                    'Transmitter': message.senders[0] if message.senders else '',
+                    'TX': message.senders[0] if message.senders else '',
                     'RX': message.receivers,
                     'Bit Start Position': signal.start,
                     'Bit Length': signal.length,
