@@ -4,6 +4,8 @@ from cantools_parser import CANToolsParser
 from signal_analyzer import SignalAnalyzer
 import configparser
 
+import matplotlib.pyplot as plt
+import plotly.express as px
 
 def load_config():
     # config.ini 파일을 읽어옴
@@ -72,6 +74,22 @@ def main():
     save_dataframes_to_csv(message_df, signal_df_simple,
                            signal_df, ecu_matrix_df)
 
+    # color_continuous_scale
+    # ggrnyl     agsunset    blackbody   bluered     blues       blugrn      bluyl       brwnyl
+    # bugn        bupu        burg        burgyl      cividis     darkmint    electric    emrld
+    # gnbu        greens      greys       hot         inferno     jet         magenta     magma
+    # mint        orrd        oranges     oryel       peach       pinkyl      plasma      plotly3
+    # pubu        pubugn      purd        purp        purples     purpor      rainbow     rdbu
+    # rdpu        redor       reds        sunset      sunsetdark  teal        tealgrn     turbo
+    # viridis     ylgn        ylgnbu      ylorbr      ylorrd      algae       amp         deep
+    # dense       gray        haline      ice         matter      solar       speed       tempo
+    # thermal     turbid      armyrose    brbg        earth       fall        geyser      prgn
+    # piyg        picnic      portland    puor        rdgy        rdylbu      rdylgn      spectral
+    # tealrose    temps       tropic      balance     curl        delta       oxy         edge
+    # hsv         icefire     phase       twilight    mrybm       mygbm
+
+    fig = px.imshow(ecu_matrix_df, color_continuous_scale='purples')
+    fig.show()
 
 if __name__ == "__main__":
     main()
