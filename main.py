@@ -2,9 +2,16 @@
 
 import pandas as pd
 from cantools_parser import CANToolsParser
+import configparser
 
 if __name__ == "__main__":
-    dbc_file_path = "sample.dbc"
+    # config.ini 파일을 읽어옴
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+
+    # DBC 파일 경로 설정
+    dbc_file_path = config['Paths']['dbc_file_path']
+
     parser = CANToolsParser(dbc_file_path)
 
     # DBC 파일 파싱
